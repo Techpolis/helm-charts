@@ -57,6 +57,9 @@ spec:
       - name: config
         configMap:
           name: {{ include "risingwave.configurationConfigMapName" . }}
+      - name: gg-kafka-cert-persistent-storage
+        persistentVolumeClaim:
+          claimName: {{ .Values.ggname }}-backend-pvc-dynamic
       restartPolicy: Always
       {{- if .Values.computeComponent.terminationGracePeriodSeconds }}
       terminationGracePeriodSeconds: {{ .Values.computeComponent.terminationGracePeriodSeconds }}
@@ -238,6 +241,9 @@ spec:
         volumeMounts:
         - mountPath: /risingwave/config
           name: config
+          readOnly: true
+        - name: gg-kafka-cert-persistent-storage
+          mountPath: /usr/src/app/certs
           readOnly: true
         {{- if .Values.computeComponent.securityContext }}
         securityContext: {{ toYaml .Values.computeComponent.securityContext | nindent 10 }}
